@@ -96,6 +96,6 @@ if submit:
         print(input_prompt)
         st.subheader('The Response is')
         st.write(response)
-        st.dataframe(response)
+        st.write(type(response))
     else:
         st.error("Please upload at least one image file!")
