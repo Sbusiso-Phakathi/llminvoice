@@ -144,7 +144,7 @@ if uploaded_files:
         image = Image.open(uploaded_file)
         st.image(image, caption=f'Uploaded image: {uploaded_file.name}', use_column_width=True)
 
-submit = st.button("Tell me about the invoice")
+submit = st.button("Process Invoice")
 
 # Predefined prompt
 input_prompt = """
