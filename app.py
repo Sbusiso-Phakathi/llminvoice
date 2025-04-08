@@ -1,69 +1,3 @@
-# from dotenv import load_dotenv
-
-# load_dotenv() # load all the environment variables from .env
-
-
-# import streamlit as st
-# import os
-# from PIL import Image
-# import google.generativeai as genai
-
-# genai.configure(api_key=os.getenv('GOOGLE_API_KEY'))
-
-
-# # function to load gemini pro vision
-
-
-# def get_response(model, input, image, prompt):
-#     response = model.generate_content([input, image[0], prompt])
-
-#     return response.text
-
-
-# def input_image_details(uploaded_file):
-#     if uploaded_file is not None:
-#         # read the file into bytes
-#         bytes_data = uploaded_file.getvalue()
-
-#         image_parts = [
-#             {
-#                 "mime_type": uploaded_file.type,
-#                 "data": bytes_data
-#             }
-#         ]
-#         return image_parts
-#     else:
-#         raise FileNotFoundError("No file uploaded")
-
-
-
-# # Initialize streamlit
-# st.set_page_config(page_title='MultiLanguage Invoice Extractor')
-
-# st.header("Multilanguage Invoice Extractor")
-# input = st.text_input("Input Prompt: ", key='input')
-# uploaded_file = st.file_uploader('Choose an image of the invoice...', type=['jpg', 'jpeg', 'png'])
-
-# image = ''
-# if uploaded_file is not None:
-#     image = Image.open(uploaded_file)
-#     st.image(image, caption='Uploaded image', use_column_width=True)
-
-# submit = st.button("Tell me about the invoice")
-
-
-# input_prompt = """
-# You are a skilled professional specializing in the interpretation of invoices across various languages. Users will upload images of invoices, and you will provide accurate responses to any questions related specifically to invoices. Your task is to offer precise and insightful assistance in invoice interpretation, ensuring clarity, structured and accuracy in your responses.
-
-# """
-# if submit:
-#     model = genai.GenerativeModel('gemini-1.5-flash')
-#     image_data = input_image_details(uploaded_file)
-#     response = get_response(model, input_prompt, image_data, input)
-#     st.subheader('The Resposne is')
-#     st.write(response)
-
-    
 import os
 from dotenv import load_dotenv
 import streamlit as st
@@ -104,7 +38,7 @@ st.header("Multilanguage Invoice Extractor")
 # input = st.text_input("Input Prompt: ", key='input')
 input = """please extract all I emphasize all data  and line items and format out put to strictly json. dont aggregate simmilar or duplicated rows.. strictly to this format of  12 features don't give
  me anything else. Check for rollups and individual line items.remember this is important Folio account number is sometimes regarded as customer no or custmer p/o number. it is never ever null try and
-   find it.Also vat is also never null, if it's not the vat should be 15 percent of price.You can lookup the Supplier Name from """ + str(folios['NEXGRO COMPANY'].values) + """ + You can also lookup the Client Name from """ + str(silos['COOP'].values) + """.Silo Name is sometimes regarded as branch or tak.you can lookup the Silo Name from""" + str(silos['SILO NAME'].values) + """.I want only the 12 features. this is important.  12 features remember this 
+   find it.Also vat is also never null, if it's not the vat should be 15 percent of price.You can lookup the folio account number  from """ + str(folios['Folio'].values) + """ + You can lookup the Supplier Name from """ + str(folios['NEXGRO COMPANY'].values) + """ + You can also lookup the Client Name from """ + str(silos['COOP'].values) + """.Silo Name is sometimes regarded as branch or tak.you can lookup the Silo Name from""" + str(silos['SILO NAME'].values) + """.I want only the 12 features. this is important.  12 features remember this 
    [   {  "Silo Name": "Klipdale silo", "Folio Account Number":423423,
        Supplier": "AFRICAN GRAIN INVESTMENTS (PTY)" ,   "Client":"Overberg Agri Bedrywe (Edms) Bpk",   "Invoice number": "MIVP123083083/2",    "Document Type": "Belasting Faktuur",     
        "Invoice Date": "2024-10-30",     "Units": 1000,     "Price": 22760.62,     "Total Excl": 22760.62,     "Vat": 3414.09,     "Total Incl": 26174.71,  "Total Invoice": 186174.71,   "Item Description": "DAY STORAGE BREDASDORP"   },
