@@ -103,7 +103,7 @@ st.header("Multilanguage Invoice Extractor")
 # input = st.text_input("Input Prompt: ", key='input')
 input = """please extract all I emphasize all data  and line items and format out put to strictly json. dont aggregate simmilar or duplicated rows.. strictly to this format of  12 features don't give
  me anything else. Check for rollups and individual line items.remember this is important Folio account number is sometimes regarded as customer no or custmer p/o number. it is never ever null try and
-   find it.Also vat is also never null, if it's not the vat should be 15 percent of price.Silo Name is sometimes regarded as branch or tak.you can lookup the Client from """ + str(silos['COOP'].values) + """Silo Name is sometimes regarded as branch or tak.you can lookup the Silo Name from""" + str(silos['SILO NAME'].values) + """.I want only the 12 features. this is important.  12 features remember this 
+   find it.Also vat is also never null, if it's not the vat should be 15 percent of price.You can lookup the Client from """ + str(silos['COOP'].values) + """Silo Name is sometimes regarded as branch or tak.you can lookup the Silo Name from""" + str(silos['SILO NAME'].values) + """.I want only the 12 features. this is important.  12 features remember this 
    [   {  "Silo Name": "Klipdale silo", "Folio Account Number":423423,
        Supplier": "AFRICAN GRAIN INVESTMENTS (PTY)" ,   "Client":"Overberg Agri Bedrywe (Edms) Bpk",   "Invoice number": "MIVP123083083/2",    "Document Type": "Belasting Faktuur",     
        "Invoice Date": "2024-10-30",     "Units": 1000,     "Price": 22760.62,     "Total Excl": 22760.62,     "Vat": 3414.09,     "Total Incl": 26174.71,     "Item Description": "DAY STORAGE BREDASDORP"   },
