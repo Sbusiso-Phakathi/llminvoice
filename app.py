@@ -40,42 +40,7 @@
 # # Title and input elements
 # st.header("Multilanguage Invoice Extractor")
 # # input = st.text_input("Input Prompt: ", key='input')
-# input = """please extract all I emphasize all data  and line items and format out put to strictly json. dont aggregate simmilar or duplicated rows.. strictly to this format of  12 features don't give
-#  me anything else. Check for rollups and individual line items.remember this is important Folio account number is sometimes regarded as customer no or custmer p/o number. it is never ever null try and
-#    find it.Also vat is also never null, if it's not the vat should be 15 percent of price.You can lookup the folio account number  from """ + str(folios['Folio'].values) + """ + You can lookup the Supplier Name from """ + str(folios['NEXGRO COMPANY'].values) + """ + You can also lookup the Client Company Name from """ + str(silos['COOP'].values) + """.Silo Name is sometimes regarded as branch or tak.you can lookup the Silo Name from""" + str(silos['SILO NAME'].values) + """.I want only the 12 features. this is important.  12 features remember this 
-#    [   {  "Silo Name": "Klipdale silo", "Folio Account Number":423423,
-#        Supplier": "AFRICAN GRAIN INVESTMENTS (PTY)" ,   "Client Company":"Overberg Agri Bedrywe (Edms) Bpk",   "Invoice number": "MIVP123083083/2",    "Document Type": "Belasting Faktuur",     
-#        "Invoice Date": "2024-10-30",     "Units": 1000,     "Price": 22760.62,     "Total Excl": 22760.62,     "Vat": 3414.09,     "Total Incl": 26174.71,  "Total Invoice": 186174.71,   "Item Description": "DAY STORAGE BREDASDORP"   },
-#              {   "Silo Name": "Klipdale silo",  "Folio Account Number":423423,  "Supplier": "AFRICAN GRAIN INVESTMENTS (PTY)" ,   "Client Company":"Overberg Agri Bedrywe (Edms) Bpk",   "Invoice number": "MIVP123083083/2",   "Document Type": "Belasting Faktuur",
-#                        "Invoice Date": "2024-10-30",     "Units": 1000,     "Price": 69193.59,     "Total Excl": 69193.59,     "Vat": 10379.04,     "Total Incl": 79572.63, "Total Invoice": 186174.71,    "Item Description": "DAY STORAGE NAPIER"   },
-#                              {  "Silo Name": "Klipdale silo",   "Folio Account Number":423423,  "Supplier": "AFRICAN GRAIN INVESTMENTS (PTY)" ,   "Client Company":"Overberg Agri Bedrywe (Edms) Bpk",   "Invoice number": "MIVP123083083/2",
-#                                    "Document Type": "Belasting Faktuur",     "Invoice Date": "2024-10-30",     "Units": 1000,     "Price": 89199.79,     "Total Excl": 89199.79,     "Vat": 13379.97,     
-#                                    "Total Incl": 102579.76, "Total Invoice": 186174.71,     "Item Description": "DAY STORAGE KLIPDALE"   },   {  "Silo Name": "Klipdale silo", "Folio Account Number":423423,     "Supplier": "AFRICAN GRAIN INVESTMENTS (PTY)" ,   
-#                                    "Client Company":"Overberg Agri Bedrywe (Edms) Bpk",   "Invoice number": "MIVP123083083/2",  "Document Type": "Belasting Faktuur",     "Invoice Date": "2024-10-30",     "Units": 1000,     
-#                                    "Price": 39161.00,     "Total Excl": 39161.00,     "Vat": 5874.15,     "Total Incl": 45035.15, "Total Invoice": 186174.71,    "Item Description": "DAY STORAGE PROTEM"   },   {  "Silo Name": "Klipdale silo",  "Folio Account Number":423423,   
-#                                    "Supplier": "AFRICAN GRAIN INVESTMENTS (PTY)" ,   "Client Company":"Overberg Agri Bedrywe (Edms) Bpk",   "Invoice number": "MIVP123083083/2",  "Document Type": "Belasting Faktuur",     
-#                                    "Invoice Date": "2024-10-30",     "Units": 1000,     "Price": 119016.49,     "Total Excl": 119016.49,     "Vat": 17852.47,     "Total Incl": 136868.96, "Total Invoice": 186174.71,    
-#                                    "Item Description": "DAY STORAGE CALEDON"   },   {  "Silo Name": "Klipdale silo",   "Folio Account Number":423423,  "Supplier": "AFRICAN GRAIN INVESTMENTS (PTY)" ,   "Client Company":"Overberg Agri Bedrywe (Edms) Bpk",  
-#                                      "Invoice number": "MIVP123083083/2",   "Document Type": "Belasting Faktuur",     "Invoice Date": "2024-10-30",     "Units": 1000,     "Price": 42338.32,     "Total Excl": 42338.32,     
-#                                      "Vat": 6350.75,     "Total Incl": 48689.07, "Total Invoice": 186174.71,    "Item Description": "DAY STORAGE KRIGE"   },   {  "Silo Name": "Klipdale silo",   "Folio Account Number":423423,   "Supplier": "AFRICAN GRAIN INVESTMENTS (PTY)" ,   
-#                                      "Client Company":"Overberg Agri Bedrywe (Edms) Bpk",   "Invoice number": "MIVP123083083/2",  "Document Type": "Belasting Faktuur",     "Invoice Date": "2024-10-30",     "Units": 40.021,     
-#                                      "Price": 290.00,     "Total Excl": 11605.89,     "Vat": 1740.91,     "Total Incl": 13347.00, "Total Invoice": 186174.71,    "Item Description": "STOCK CARRY OVER KLIPDALE"   },   
-#                                      {  "Silo Name": "Klipdale silo", "Folio Account Number":423423,    "Supplier": "AFRICAN GRAIN INVESTMENTS (PTY)" ,   "Client Company":"Overberg Agri Bedrywe (Edms) Bpk",    "Invoice number": "MIVP123083083/2",  
-#                                        "Document Type": "Belasting Faktuur",     "Invoice Date": "2024-10-30",     "Units": 40.100,     "Price": 290.00,     "Total Excl": 11629.00,     "Vat": 1744.35,     
-#                                        "Total Incl": 13373.35, "Total Invoice": 186174.71,    "Item Description": "STOCK CARRY OVER RIETPOEL"   },   {"Silo Name": "Klipdale silo", "Folio Account Number":423423,   "Supplier": "AFRICAN GRAIN INVESTMENTS (PTY)" ,   
-#                                        "Client Company":"Overberg Agri Bedrywe (Edms) Bpk",      "Invoice number": "MIVP123083083/2",   "Document Type": "Belasting Faktuur",     "Invoice Date": "2024-10-30",     
-#                                        "Units": 4952.135,     "Price": 255.00,     "Total Excl": 1263334.27,     "Vat": 189419.16,     "Total Incl": 1452753.43, "Total Invoice": 186174.71,    "Item Description": "LONG TERM STOCK BREDASDORP"   },  
-#                                          { "Silo Name": "Klipdale silo", "Folio Account Number":423423,   "Supplier": "AFRICAN GRAIN INVESTMENTS (PTY)" ,   "Client Company":"Overberg Agri Bedrywe (Edms) Bpk",     "Invoice number": "MIVP123083083/2",   
-#                                          "Document Type": "Belasting Faktuur",     "Invoice Date": "2024-10-30",     "Units": 716.062,     "Price": 255.00,     "Total Excl": 182555.73,     "Vat": 27389.37,     
-#                                          "Total Incl": 209945.10, "Total Invoice": 186174.71,    "Item Description": "LONG TERM STOCK KLIPDALE"   },   { "Silo Name": "Klipdale silo",   "Folio Account Number":423423,  "Supplier": "AFRICAN GRAIN INVESTMENTS (PTY)" ,  
-#                                            "Client Company":"Overberg Agri Bedrywe (Edms) Bpk",    "Invoice number": "MIVP123083083/2",   "Document Type": "Belasting Faktuur",     "Invoice Date": "2024-10-30",     
-#                                            "Units": 650.649,     "Price": 255.00,     "Total Excl": 165914.24,     "Vat": 24887.33,     "Total Incl": 190801.57, "Total Invoice": 186174.71,    "Item Description": "LONG TERM STOCK PROTEM"   },   
-#                                            { "Silo Name": "Klipdale silo",  "Folio Account Number":423423,  "Supplier": "AFRICAN GRAIN INVESTMENTS (PTY)" ,   "Client Company":"Overberg Agri Bedrywe (Edms) Bpk",    "Invoice number": "MIVP123083083/2",   
-#                                            "Document Type": "Belasting Faktuur",     "Invoice Date": "2024-10-30",     "Units": 634.116,     "Price": 255.00,     "Total Excl": 161719.78,     "Vat": 24254.94,     
-#                                            "Total Incl": 185974.72,  "Total Invoice": 186174.71,   "Item Description": "LONG TERM STOCK CALEDON"   },   { "Silo Name": "Klipdale silo",  "Folio Account Number":423423,  "Supplier": "AFRICAN GRAIN INVESTMENTS (PTY)" ,  
-#                                              "Client Company":"Overberg Agri Bedrywe (Edms) Bpk",    "Invoice number": "MIVP123083083/2",   "Document Type": "Belasting Faktuur",     "Invoice Date": "2024-10-30",    
-#                                                "Units": 4877.681,     "Price": 255.00,     "Total Excl": 1244776.05,     "Vat": 186571.30,     "Total Incl": 1431347.35,   "Total Invoice": 186174.71,  "Item Description": "LONG TERM STOCK RIETPOEL"   } ]"""
-# # Allow users to upload multiple image files
+
 # uploaded_files = st.file_uploader('Choose images of invoices...', type=['jpg', 'jpeg', 'png'], accept_multiple_files=True)
 
 # # Display uploaded images
@@ -203,13 +168,52 @@ submit = st.button("Process Invoice")
 
 # Construct full prompt with data
 input_prompt = """
-You are a skilled professional specializing in the interpretation of invoices across various languages...
+You are a skilled professional specializing in the interpretation of invoices across various languages. Users will upload images of invoices, and you will provide accurate responses to any questions related specifically to invoices. Your task is to offer precise and insightful assistance in invoice interpretation, ensuring clarity, structure, and accuracy in your responses.
 """
 # Append data-driven instructions
-input_prompt += f"\nFolio Account Numbers: {folios['Folio'].values}"
-input_prompt += f"\nSupplier Names: {folios['NEXGRO COMPANY'].values}"
-input_prompt += f"\nClient Company Names: {silos['COOP'].values}"
-input_prompt += f"\nSilo Names: {silos['SILO NAME'].values}"
+# input_prompt += f"\nFolio Account Numbers: {folios['Folio'].values}"
+# input_prompt += f"\nSupplier Names: {folios['NEXGRO COMPANY'].values}"
+# input_prompt += f"\nClient Company Names: {silos['COOP'].values}"
+# input_prompt += f"\nSilo Names: {silos['SILO NAME'].values}"
+
+input = """please extract all I emphasize all data  and line items and format out put to strictly json. dont aggregate simmilar or duplicated rows.. strictly to this format of  12 features don't give
+ me anything else. Check for rollups and individual line items.remember this is important Folio account number is sometimes regarded as customer no or custmer p/o number. it is never ever null try and
+   find it.Also vat is also never null, if it's not the vat should be 15 percent of price.You can lookup the folio account number  from """ + str(folios['Folio'].values) + """ + You can lookup the Supplier Name from """ + str(folios['NEXGRO COMPANY'].values) + """ + You can also lookup the Client Company Name from """ + str(silos['COOP'].values) + """.Silo Name is sometimes regarded as branch or tak.you can lookup the Silo Name from""" + str(silos['SILO NAME'].values) + """.I want only the 12 features. this is important.  12 features remember this 
+   [   {  "Silo Name": "Klipdale silo", "Folio Account Number":423423,
+       Supplier": "AFRICAN GRAIN INVESTMENTS (PTY)" ,   "Client Company":"Overberg Agri Bedrywe (Edms) Bpk",   "Invoice number": "MIVP123083083/2",    "Document Type": "Belasting Faktuur",     
+       "Invoice Date": "2024-10-30",     "Units": 1000,     "Price": 22760.62,     "Total Excl": 22760.62,     "Vat": 3414.09,     "Total Incl": 26174.71,  "Total Invoice": 186174.71,   "Item Description": "DAY STORAGE BREDASDORP"   },
+             {   "Silo Name": "Klipdale silo",  "Folio Account Number":423423,  "Supplier": "AFRICAN GRAIN INVESTMENTS (PTY)" ,   "Client Company":"Overberg Agri Bedrywe (Edms) Bpk",   "Invoice number": "MIVP123083083/2",   "Document Type": "Belasting Faktuur",
+                       "Invoice Date": "2024-10-30",     "Units": 1000,     "Price": 69193.59,     "Total Excl": 69193.59,     "Vat": 10379.04,     "Total Incl": 79572.63, "Total Invoice": 186174.71,    "Item Description": "DAY STORAGE NAPIER"   },
+                             {  "Silo Name": "Klipdale silo",   "Folio Account Number":423423,  "Supplier": "AFRICAN GRAIN INVESTMENTS (PTY)" ,   "Client Company":"Overberg Agri Bedrywe (Edms) Bpk",   "Invoice number": "MIVP123083083/2",
+                                   "Document Type": "Belasting Faktuur",     "Invoice Date": "2024-10-30",     "Units": 1000,     "Price": 89199.79,     "Total Excl": 89199.79,     "Vat": 13379.97,     
+                                   "Total Incl": 102579.76, "Total Invoice": 186174.71,     "Item Description": "DAY STORAGE KLIPDALE"   },   {  "Silo Name": "Klipdale silo", "Folio Account Number":423423,     "Supplier": "AFRICAN GRAIN INVESTMENTS (PTY)" ,   
+                                   "Client Company":"Overberg Agri Bedrywe (Edms) Bpk",   "Invoice number": "MIVP123083083/2",  "Document Type": "Belasting Faktuur",     "Invoice Date": "2024-10-30",     "Units": 1000,     
+                                   "Price": 39161.00,     "Total Excl": 39161.00,     "Vat": 5874.15,     "Total Incl": 45035.15, "Total Invoice": 186174.71,    "Item Description": "DAY STORAGE PROTEM"   },   {  "Silo Name": "Klipdale silo",  "Folio Account Number":423423,   
+                                   "Supplier": "AFRICAN GRAIN INVESTMENTS (PTY)" ,   "Client Company":"Overberg Agri Bedrywe (Edms) Bpk",   "Invoice number": "MIVP123083083/2",  "Document Type": "Belasting Faktuur",     
+                                   "Invoice Date": "2024-10-30",     "Units": 1000,     "Price": 119016.49,     "Total Excl": 119016.49,     "Vat": 17852.47,     "Total Incl": 136868.96, "Total Invoice": 186174.71,    
+                                   "Item Description": "DAY STORAGE CALEDON"   },   {  "Silo Name": "Klipdale silo",   "Folio Account Number":423423,  "Supplier": "AFRICAN GRAIN INVESTMENTS (PTY)" ,   "Client Company":"Overberg Agri Bedrywe (Edms) Bpk",  
+                                     "Invoice number": "MIVP123083083/2",   "Document Type": "Belasting Faktuur",     "Invoice Date": "2024-10-30",     "Units": 1000,     "Price": 42338.32,     "Total Excl": 42338.32,     
+                                     "Vat": 6350.75,     "Total Incl": 48689.07, "Total Invoice": 186174.71,    "Item Description": "DAY STORAGE KRIGE"   },   {  "Silo Name": "Klipdale silo",   "Folio Account Number":423423,   "Supplier": "AFRICAN GRAIN INVESTMENTS (PTY)" ,   
+                                     "Client Company":"Overberg Agri Bedrywe (Edms) Bpk",   "Invoice number": "MIVP123083083/2",  "Document Type": "Belasting Faktuur",     "Invoice Date": "2024-10-30",     "Units": 40.021,     
+                                     "Price": 290.00,     "Total Excl": 11605.89,     "Vat": 1740.91,     "Total Incl": 13347.00, "Total Invoice": 186174.71,    "Item Description": "STOCK CARRY OVER KLIPDALE"   },   
+                                     {  "Silo Name": "Klipdale silo", "Folio Account Number":423423,    "Supplier": "AFRICAN GRAIN INVESTMENTS (PTY)" ,   "Client Company":"Overberg Agri Bedrywe (Edms) Bpk",    "Invoice number": "MIVP123083083/2",  
+                                       "Document Type": "Belasting Faktuur",     "Invoice Date": "2024-10-30",     "Units": 40.100,     "Price": 290.00,     "Total Excl": 11629.00,     "Vat": 1744.35,     
+                                       "Total Incl": 13373.35, "Total Invoice": 186174.71,    "Item Description": "STOCK CARRY OVER RIETPOEL"   },   {"Silo Name": "Klipdale silo", "Folio Account Number":423423,   "Supplier": "AFRICAN GRAIN INVESTMENTS (PTY)" ,   
+                                       "Client Company":"Overberg Agri Bedrywe (Edms) Bpk",      "Invoice number": "MIVP123083083/2",   "Document Type": "Belasting Faktuur",     "Invoice Date": "2024-10-30",     
+                                       "Units": 4952.135,     "Price": 255.00,     "Total Excl": 1263334.27,     "Vat": 189419.16,     "Total Incl": 1452753.43, "Total Invoice": 186174.71,    "Item Description": "LONG TERM STOCK BREDASDORP"   },  
+                                         { "Silo Name": "Klipdale silo", "Folio Account Number":423423,   "Supplier": "AFRICAN GRAIN INVESTMENTS (PTY)" ,   "Client Company":"Overberg Agri Bedrywe (Edms) Bpk",     "Invoice number": "MIVP123083083/2",   
+                                         "Document Type": "Belasting Faktuur",     "Invoice Date": "2024-10-30",     "Units": 716.062,     "Price": 255.00,     "Total Excl": 182555.73,     "Vat": 27389.37,     
+                                         "Total Incl": 209945.10, "Total Invoice": 186174.71,    "Item Description": "LONG TERM STOCK KLIPDALE"   },   { "Silo Name": "Klipdale silo",   "Folio Account Number":423423,  "Supplier": "AFRICAN GRAIN INVESTMENTS (PTY)" ,  
+                                           "Client Company":"Overberg Agri Bedrywe (Edms) Bpk",    "Invoice number": "MIVP123083083/2",   "Document Type": "Belasting Faktuur",     "Invoice Date": "2024-10-30",     
+                                           "Units": 650.649,     "Price": 255.00,     "Total Excl": 165914.24,     "Vat": 24887.33,     "Total Incl": 190801.57, "Total Invoice": 186174.71,    "Item Description": "LONG TERM STOCK PROTEM"   },   
+                                           { "Silo Name": "Klipdale silo",  "Folio Account Number":423423,  "Supplier": "AFRICAN GRAIN INVESTMENTS (PTY)" ,   "Client Company":"Overberg Agri Bedrywe (Edms) Bpk",    "Invoice number": "MIVP123083083/2",   
+                                           "Document Type": "Belasting Faktuur",     "Invoice Date": "2024-10-30",     "Units": 634.116,     "Price": 255.00,     "Total Excl": 161719.78,     "Vat": 24254.94,     
+                                           "Total Incl": 185974.72,  "Total Invoice": 186174.71,   "Item Description": "LONG TERM STOCK CALEDON"   },   { "Silo Name": "Klipdale silo",  "Folio Account Number":423423,  "Supplier": "AFRICAN GRAIN INVESTMENTS (PTY)" ,  
+                                             "Client Company":"Overberg Agri Bedrywe (Edms) Bpk",    "Invoice number": "MIVP123083083/2",   "Document Type": "Belasting Faktuur",     "Invoice Date": "2024-10-30",    
+                                               "Units": 4877.681,     "Price": 255.00,     "Total Excl": 1244776.05,     "Vat": 186571.30,     "Total Incl": 1431347.35,   "Total Invoice": 186174.71,  "Item Description": "LONG TERM STOCK RIETPOEL"   } ]"""
+
+
+
 
 if submit:
     if not uploaded_files:
@@ -221,7 +225,7 @@ if submit:
             st.error("Failed to load image data.")
         else:
             model = genai.GenerativeModel('gemini-1.5-flash')
-            response = get_response(model, input_prompt, image_data, "")
+            response = get_response(model, input_prompt, image_data, input)
 
             if response:
                 st.subheader('The Response is')
