@@ -249,15 +249,184 @@
 #                     st.error(f"Unexpected error parsing response: {e}")
 
 
+# import os
+# from dotenv import load_dotenv
+# import streamlit as st
+# from PIL import Image, UnidentifiedImageError
+# import google.generativeai as genai
+# import pandas as pd
+# import json
+# import re
+# import time
+
+# # Load API key
+# load_dotenv()
+# api_key = os.getenv('GOOGLE_API_KEY')
+# if not api_key:
+#     st.error("GOOGLE_API_KEY not found in environment.")
+#     st.stop()
+
+# try:
+#     genai.configure(api_key=api_key)
+# except Exception as e:
+#     st.error(f"Gemini configuration error: {e}")
+#     st.stop()
+
+# # Load support CSVs
+# try:
+#     silos = pd.read_csv("data/silos.csv")
+#     folios = pd.read_csv("data/folios.csv")
+#     grade_cost = pd.read_csv("data/cost-grades.csv")
+
+# except Exception as e:
+#     st.error(f"Error loading CSVs: {e}")
+#     st.stop()
+
+# # Helper functions
+# def input_image_details(uploaded_files):
+#     image_parts = []
+#     for uploaded_file in uploaded_files:
+#         try:
+#             bytes_data = uploaded_file.getvalue()
+#             image_parts.append({
+#                 "mime_type": uploaded_file.type,
+#                 "data": bytes_data
+#             })
+#         except Exception as e:
+#             st.warning(f"Could not read image {uploaded_file.name}: {e}")
+#     return image_parts
+
+# def get_response(model, input_text, image_parts, prompt):
+#     try:
+#         response = model.generate_content([input_text, *image_parts, prompt])
+#         return response.text
+#     except Exception as e:
+#         st.error(f"Gemini generation failed: {e}")
+#         return None
+
+# # Prompt setup
+# input_prompt = """
+# You are a skilled professional specializing in the interpretation of invoices across various languages. Users will upload images of invoices, and you will provide accurate responses to any questions related specifically to invoices. Your task is to offer precise and insightful assistance in invoice interpretation, ensuring clarity, structure, and accuracy in your responses.
+# """
+
+# input = f"""please extract all I emphasize all data  and line items and format output strictly as JSON. Don't aggregate similar or duplicated rows. Stick to this exact format of 12 features. Do not return anything else.make credit notes amount to be negative.
+
+# Check for rollups and individual line items. This is important: 'Folio Account Number' is sometimes called 'Customer No' or 'Customer P/O Number'. It should never be null — try and find it. VAT should also never be null — if not found, assume it's 15% of the price.
+
+# You can look up the folio account numbers STRICTLY from: {folios['Folio'].values}
+# You can look up the grades STRICTLY from: {grade_cost['GRADE'].values}
+# You can look up the commodities STRICTLY from: {grade_cost['DESCRIPTION'].values}
+# You can look up the cost type STRICTLY from: {grade_cost['COST FOR'].values}
+# You can look up the supplier names STRICTLY from: {folios['NEXGRO COMPANY'].values}
+# You can look up the client company names from: {silos['COOP'].values}
+# 'Silo Name' might be called 'branch' or 'tak'. You can look it up from: {silos['SILO NAME'].values}
+
+# Only give back the following 12 features in this format:
+# [
+#     {{
+#         "Silo Name": "Example",
+#         "Folio Account Number": 123456,
+#         "Supplier": "Supplier Name",
+#         "Client Company": "Client Name",
+#         "Invoice number": "INV123456",
+#         "Document Type": "Invoice",
+#         "Invoice Date": "YYYY-MM-DD",
+#         "Grade": "SB1",
+#         "Commodity": "SOYA",
+#         "Cost Type": "DAY STORAGE"
+#         "Units": 1000,
+#         "Price": 12345.67,
+#         "Total Excl": 12345.67,
+#         "Vat": 1851.85,
+#         "Total Incl": 14197.52,
+#         "Total Invoice": 14197.52,
+#         "Item Description": "Line item description"
+#     }}
+# ]
+# """
+
+# # Streamlit UI
+# st.set_page_config(page_title='Invoice Extractor', layout="wide")
+# st.header("🚀 Multilanguage Invoice Extractor (Auto-Processing)")
+
+# uploaded_files = st.file_uploader(
+#     'Upload invoice images (jpg, jpeg, png)...',
+#     type=['jpg', 'jpeg', 'png'],
+#     accept_multiple_files=True
+# )
+
+# # Auto-processing on upload
+# if uploaded_files:
+#     batch_size = 1
+
+#     st.info(f"⏳ Starting auto-processing of {len(uploaded_files)} images in batches of {batch_size}...")
+
+#     model = genai.GenerativeModel('gemini-1.5-flash')
+#     total_batches = (len(uploaded_files) + batch_size - 1) // batch_size
+
+#     for batch_index in range(total_batches):
+#         st.markdown(f"### 🔍 Processing Batch {batch_index + 1} of {total_batches}")
+
+#         current_batch = uploaded_files[batch_index * batch_size:(batch_index + 1) * batch_size]
+
+#         # Show images
+#         for file in current_batch:
+#             try:
+#                 image = Image.open(file)
+#                 st.image(image, caption=file.name, width=250)
+#             except UnidentifiedImageError:
+#                 st.warning(f"⚠️ Could not open image: {file.name}")
+
+#         # Get results
+#         image_data = input_image_details(current_batch)
+#         if not image_data:
+#             st.warning("🚫 No valid image data found in this batch.")
+#             continue
+
+#         response = get_response(model, input_prompt, image_data, input)
+
+#         if response:
+#             try:
+#                 json_match = re.search(r'\[.*?\]', response, re.DOTALL)
+#                 if json_match:
+#                     json_data = json_match.group(0)
+#                     parsed_json = json.loads(json_data)
+#                     df = pd.DataFrame(parsed_json)
+#                     st.success(f"✅ Extracted {len(df)} records from batch {batch_index + 1}")
+#                     st.dataframe(df)
+
+#                     csv_file = "data/nexgrodata.csv"
+#                     df.to_csv(csv_file, mode='a', index=False, header=not os.path.exists(csv_file))
+#                 else:
+#                     st.warning("⚠️ No JSON data found in Gemini response.")
+#             except Exception as e:
+#                 st.error(f"JSON parsing failed: {e}")
+
+#         time.sleep(1)  # brief pause
+
+#     # Download button after processing
+#     csv_path = "data/nexgrodata.csv"
+#     if os.path.exists(csv_path):
+#         with open(csv_path, "rb") as f:
+#             st.download_button(
+#                 label="📥 Download Combined CSV",
+#                 data=f,
+#                 file_name="nexgrodata.csv",
+#                 mime="text/csv"
+#             )
+
+
 import os
 from dotenv import load_dotenv
 import streamlit as st
 from PIL import Image, UnidentifiedImageError
+import fitz  # PyMuPDF
 import google.generativeai as genai
 import pandas as pd
 import json
 import re
 import time
+import io
 
 # Load API key
 load_dotenv()
@@ -276,43 +445,25 @@ except Exception as e:
 try:
     silos = pd.read_csv("data/silos.csv")
     folios = pd.read_csv("data/folios.csv")
+    grade_cost = pd.read_csv("data/cost-grades.csv")
 except Exception as e:
     st.error(f"Error loading CSVs: {e}")
     st.stop()
-
-# Helper functions
-def input_image_details(uploaded_files):
-    image_parts = []
-    for uploaded_file in uploaded_files:
-        try:
-            bytes_data = uploaded_file.getvalue()
-            image_parts.append({
-                "mime_type": uploaded_file.type,
-                "data": bytes_data
-            })
-        except Exception as e:
-            st.warning(f"Could not read image {uploaded_file.name}: {e}")
-    return image_parts
-
-def get_response(model, input_text, image_parts, prompt):
-    try:
-        response = model.generate_content([input_text, *image_parts, prompt])
-        return response.text
-    except Exception as e:
-        st.error(f"Gemini generation failed: {e}")
-        return None
 
 # Prompt setup
 input_prompt = """
 You are a skilled professional specializing in the interpretation of invoices across various languages. Users will upload images of invoices, and you will provide accurate responses to any questions related specifically to invoices. Your task is to offer precise and insightful assistance in invoice interpretation, ensuring clarity, structure, and accuracy in your responses.
 """
 
-input = f"""please extract all I emphasize all data  and line items and format output strictly as JSON. Don't aggregate similar or duplicated rows. Stick to this exact format of 12 features. Do not return anything else.
+input = f"""please extract all I emphasize all data  and line items and format output strictly as JSON. Don't aggregate similar or duplicated rows. Stick to this exact format of 12 features. Do not return anything else.make all document type  that are credit note amounts(vat,total inc, total excl, price, total invoice and units) to be negative I emphasize the amount must be negative for credit note.
 
 Check for rollups and individual line items. This is important: 'Folio Account Number' is sometimes called 'Customer No' or 'Customer P/O Number'. It should never be null — try and find it. VAT should also never be null — if not found, assume it's 15% of the price.
 
-You can look up the folio account numbers from: {folios['Folio'].values}
-You can look up the supplier names from: {folios['NEXGRO COMPANY'].values}
+You can look up the folio account numbers STRICTLY from: {folios['Folio'].values}
+You can look up the grades STRICTLY from: {grade_cost['GRADE'].values}
+You can look up the commodities STRICTLY from: {grade_cost['DESCRIPTION'].values}
+You can look up the cost type STRICTLY from: {grade_cost['COST FOR'].values}
+You can look up the supplier names STRICTLY from: {folios['NEXGRO COMPANY'].values}
 You can look up the client company names from: {silos['COOP'].values}
 'Silo Name' might be called 'branch' or 'tak'. You can look it up from: {silos['SILO NAME'].values}
 
@@ -326,6 +477,9 @@ Only give back the following 12 features in this format:
         "Invoice number": "INV123456",
         "Document Type": "Invoice",
         "Invoice Date": "YYYY-MM-DD",
+        "Grade": "SB1",
+        "Commodity": "SOYA",
+        "Cost Type": "DAY STORAGE",
         "Units": 1000,
         "Price": 12345.67,
         "Total Excl": 12345.67,
@@ -337,44 +491,71 @@ Only give back the following 12 features in this format:
 ]
 """
 
-# Streamlit UI
-st.set_page_config(page_title='Invoice Extractor', layout="wide")
-st.header("🚀 Multilanguage Invoice Extractor (Auto-Processing)")
+# Helper: Convert PDF to list of PIL images
+def convert_pdf_to_images_pymupdf(pdf_file):
+    images = []
+    pdf_file.seek(0)
+    doc = fitz.open(stream=pdf_file.read(), filetype="pdf")
+    for page_num in range(len(doc)):
+        page = doc.load_page(page_num)
+        pix = page.get_pixmap(dpi=200)
+        img = Image.open(io.BytesIO(pix.tobytes("png")))
+        images.append(img)
+    return images
 
-uploaded_files = st.file_uploader(
-    'Upload invoice images (jpg, jpeg, png)...',
-    type=['jpg', 'jpeg', 'png'],
+# Helper: Convert images to parts for Gemini
+def input_image_details(pil_images):
+    image_parts = []
+    for img in pil_images:
+        with io.BytesIO() as img_bytes:
+            img.convert("RGB").save(img_bytes, format="JPEG")
+            image_parts.append({
+                "mime_type": "image/jpeg",
+                "data": img_bytes.getvalue()
+            })
+    return image_parts
+
+# Helper: Get Gemini response
+def get_response(model, input_text, image_parts, prompt):
+    try:
+        response = model.generate_content([input_text, *image_parts, prompt])
+        return response.text
+    except Exception as e:
+        st.error(f"Gemini generation failed: {e}")
+        return None
+
+# UI Setup
+st.set_page_config(page_title='Invoice Extractor', layout="wide")
+st.header("📄 PDF Invoice Extractor")
+
+uploaded_pdfs = st.file_uploader(
+    'Upload invoice PDFs...',
+    type=['pdf'],
     accept_multiple_files=True
 )
 
-# Auto-processing on upload
-if uploaded_files:
-    batch_size = 1
-
-    st.info(f"⏳ Starting auto-processing of {len(uploaded_files)} images in batches of {batch_size}...")
+# Auto-processing PDFs
+if uploaded_pdfs:
+    st.info(f"⏳ Starting auto-processing of {len(uploaded_pdfs)} PDF files...")
 
     model = genai.GenerativeModel('gemini-1.5-flash')
-    total_batches = (len(uploaded_files) + batch_size - 1) // batch_size
 
-    for batch_index in range(total_batches):
-        st.markdown(f"### 🔍 Processing Batch {batch_index + 1} of {total_batches}")
-
-        current_batch = uploaded_files[batch_index * batch_size:(batch_index + 1) * batch_size]
-
-        # Show images
-        for file in current_batch:
-            try:
-                image = Image.open(file)
-                st.image(image, caption=file.name, width=250)
-            except UnidentifiedImageError:
-                st.warning(f"⚠️ Could not open image: {file.name}")
-
-        # Get results
-        image_data = input_image_details(current_batch)
-        if not image_data:
-            st.warning("🚫 No valid image data found in this batch.")
+    for index, pdf_file in enumerate(uploaded_pdfs):
+        st.markdown(f"### 🔍 Processing: {pdf_file.name}")
+        try:
+            images = convert_pdf_to_images_pymupdf(pdf_file)
+        except Exception as e:
+            st.error(f"Failed to convert {pdf_file.name}: {e}")
             continue
 
+        # Show images
+        for i, image in enumerate(images):
+            st.image(image, caption=f"{pdf_file.name} - Page {i + 1}", width=250)
+
+        # Convert to Gemini format
+        image_data = input_image_details(images)
+
+        # Get model response
         response = get_response(model, input_prompt, image_data, input)
 
         if response:
@@ -384,19 +565,19 @@ if uploaded_files:
                     json_data = json_match.group(0)
                     parsed_json = json.loads(json_data)
                     df = pd.DataFrame(parsed_json)
-                    st.success(f"✅ Extracted {len(df)} records from batch {batch_index + 1}")
+                    st.success(f"✅ Extracted {len(df)} rows from {pdf_file.name}")
                     st.dataframe(df)
 
                     csv_file = "data/nexgrodata.csv"
                     df.to_csv(csv_file, mode='a', index=False, header=not os.path.exists(csv_file))
                 else:
-                    st.warning("⚠️ No JSON data found in Gemini response.")
+                    st.warning("⚠️ No JSON data found in response.")
             except Exception as e:
                 st.error(f"JSON parsing failed: {e}")
 
-        time.sleep(1)  # brief pause
+        time.sleep(1)
 
-    # Download button after processing
+    # Show download button
     csv_path = "data/nexgrodata.csv"
     if os.path.exists(csv_path):
         with open(csv_path, "rb") as f:
