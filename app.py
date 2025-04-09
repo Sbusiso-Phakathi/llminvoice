@@ -349,10 +349,11 @@ uploaded_files = st.file_uploader(
 
 # Auto-processing on upload
 if uploaded_files:
-    st.info(f"⏳ Starting auto-processing of {len(uploaded_files)} images in batches of 10...")
+    batch_size = 1
+
+    st.info(f"⏳ Starting auto-processing of {len(uploaded_files)} images in batches of {batch_size}...")
 
     model = genai.GenerativeModel('gemini-1.5-flash')
-    batch_size = 10
     total_batches = (len(uploaded_files) + batch_size - 1) // batch_size
 
     for batch_index in range(total_batches):
