@@ -249,8 +249,6 @@
 #                     st.error(f"Unexpected error parsing response: {e}")
 
 
-
-
 import os
 from dotenv import load_dotenv
 import streamlit as st
@@ -349,13 +347,12 @@ uploaded_files = st.file_uploader(
     accept_multiple_files=True
 )
 
-# Process everything automatically
+# Auto-processing on upload
 if uploaded_files:
-    batch_size = 1
-
-    st.info(f"⏳ Starting auto-processing of {len(uploaded_files)} images in batches of {batch_size}...")
+    st.info(f"⏳ Starting auto-processing of {len(uploaded_files)} images in batches of 10...")
 
     model = genai.GenerativeModel('gemini-1.5-flash')
+    batch_size = 10
     total_batches = (len(uploaded_files) + batch_size - 1) // batch_size
 
     for batch_index in range(total_batches):
@@ -396,5 +393,15 @@ if uploaded_files:
             except Exception as e:
                 st.error(f"JSON parsing failed: {e}")
 
-        # Optional pause between batches to avoid hitting API limits
-        time.sleep(1)
+        time.sleep(1)  # brief pause
+
+    # Download button after processing
+    csv_path = "data/nexgrodata.csv"
+    if os.path.exists(csv_path):
+        with open(csv_path, "rb") as f:
+            st.download_button(
+                label="📥 Download Combined CSV",
+                data=f,
+                file_name="nexgrodata.csv",
+                mime="text/csv"
+            )
